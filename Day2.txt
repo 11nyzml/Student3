@@ -1,0 +1,220 @@
+package com.java1234.view;
+
+import java.awt.BorderLayout;
+
+public class MainFrm extends JFrame {
+
+	private JPanel contentPane;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MainFrm frame = new MainFrm();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public MainFrm() {
+		setTitle("学生信息管理系统主界面");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 600, 437);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu menu = new JMenu("学生信息管理");
+		menuBar.add(menu);
+		
+		JMenuItem menuItem = new JMenuItem("基本信息");
+		menu.add(menuItem);
+		
+		JMenuItem menuItem_2 = new JMenuItem("扩展信息");
+		menu.add(menuItem_2);
+		
+		JMenuItem menuItem_3 = new JMenuItem("退出系统");
+		menu.add(menuItem_3);
+		
+		JMenu menu_1 = new JMenu("选课管理");
+		menuBar.add(menu_1);
+		
+		JMenuItem menuItem_1 = new JMenuItem("马原");
+		menu_1.add(menuItem_1);
+		
+		JMenuItem menuItem_4 = new JMenuItem("毛概");
+		menu_1.add(menuItem_4);
+		
+		JMenuItem menuItem_5 = new JMenuItem("思修");
+		menu_1.add(menuItem_5);
+		
+		JMenuItem menuItem_6 = new JMenuItem("大学体育");
+		menu_1.add(menuItem_6);
+		
+		JMenu mnNewMenu = new JMenu("宿舍管理");
+		menuBar.add(mnNewMenu);
+		
+		JMenu menu_5 = new JMenu("男生宿舍");
+		mnNewMenu.add(menu_5);
+		
+		JMenu menu_7 = new JMenu("一号楼");
+		menu_5.add(menu_7);
+		
+		JMenuItem menuItem_7 = new JMenuItem("1-111");
+		menu_7.add(menuItem_7);
+		
+		JMenuItem menuItem_8 = new JMenuItem("1-112");
+		menu_7.add(menuItem_8);
+		
+		JMenu menu_8 = new JMenu("二号楼");
+		menu_5.add(menu_8);
+		
+		JMenuItem menuItem_9 = new JMenuItem("2-111");
+		menu_8.add(menuItem_9);
+		
+		JMenuItem menuItem_10 = new JMenuItem("2-112");
+		menu_8.add(menuItem_10);
+		
+		JMenu menu_9 = new JMenu("三号楼");
+		menu_5.add(menu_9);
+		
+		JMenuItem menuItem_11 = new JMenuItem("3-111");
+		menu_9.add(menuItem_11);
+		
+		JMenuItem menuItem_12 = new JMenuItem("3-112");
+		menu_9.add(menuItem_12);
+		
+		JMenu menu_6 = new JMenu("女生宿舍");
+		mnNewMenu.add(menu_6);
+		
+		JMenu mnNewMenu_1 = new JMenu("四号楼");
+		menu_6.add(mnNewMenu_1);
+		
+		JMenuItem menuItem_13 = new JMenuItem("4-111");
+		mnNewMenu_1.add(menuItem_13);
+		
+		JMenuItem menuItem_14 = new JMenuItem("4-112");
+		mnNewMenu_1.add(menuItem_14);
+		
+		JMenuItem menuItem_15 = new JMenuItem("4-113");
+		mnNewMenu_1.add(menuItem_15);
+		
+		JMenu menu_10 = new JMenu("五号楼");
+		menu_6.add(menu_10);
+		
+		JMenuItem menuItem_16 = new JMenuItem("5-111");
+		menu_10.add(menuItem_16);
+		
+		JMenuItem menuItem_17 = new JMenuItem("5-112");
+		menu_10.add(menuItem_17);
+		
+		JMenu menu_2 = new JMenu("成绩管理");
+		menuBar.add(menu_2);
+		
+		JMenuItem menuItem_18 = new JMenuItem("期中成绩");
+		menu_2.add(menuItem_18);
+		
+		JMenuItem menuItem_19 = new JMenuItem("期末成绩");
+		menu_2.add(menuItem_19);
+		
+		JMenu menu_3 = new JMenu("教师信息管理");
+		menuBar.add(menu_3);
+		
+		JMenuItem menuItem_20 = new JMenuItem("基本信息");
+		menu_3.add(menuItem_20);
+		
+		JMenu menu_4 = new JMenu("关于我们");
+		menuBar.add(menu_4);
+		
+		JMenuItem menuItem_21 = new JMenuItem("使用帮助");
+		menu_4.add(menuItem_21);
+		
+		JMenuItem menuItem_22 = new JMenuItem("退出系统");
+		menu_4.add(menuItem_22);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setContentPane(contentPane);
+	}
+
+	private static void addPopup(Component component, final JPopupMenu popup) {
+		component.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			public void mouseReleased(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					showMenu(e);
+				}
+			}
+			private void showMenu(MouseEvent e) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		});
+	}
+}
+
+
+package com.java1234.util;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+
+public class DbUtil {
+     private String dbUrl="jdbc:mysql://localhost:3306/db_book";
+     private String dbUserName="root";
+     private String dbPassWord="123456";
+     private String jdbcName="com.mysql.jdbc.Driver";
+     //获取数据库连接
+     
+     public Connection getCon() throws Exception{
+    	 Class.forName(jdbcName);
+    	 Connection con=DriverManager.getConnection(dbUrl, dbUserName,dbPassWord);
+    	 return con;
+     }
+     
+     //关闭数据库连接
+     public void closeCon(Connection con) throws Exception{
+    	 if(con!=null){
+    		 con.close();
+    		 
+    	 }
+     }
+     public static void main(String[] args) {
+		DbUtil dbUtil=new DbUtil();
+		try {
+			dbUtil.getCon();
+			System.out.println("数据库连接成功！");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+     
+}
+
+
+
+package com.java1234.util;
+
+public class StringUtil {
+          
+	public static boolean  isEmpty(String str){
+		if("".equals(str)||str==null){
+			return true;
+		}else{
+			return false;
+		}
+	}
+}
