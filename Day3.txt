@@ -1,0 +1,275 @@
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ page import="java.sql.*" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'index.jsp' starting page</title>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+  </head>
+  
+  <body><div align="center"> 
+    <font size="6">根据姓名查询到的学生信息</font> <br>
+      <table bgcolor=yellow border=1>
+
+    <%
+    request.setCharacterEncoding("utf-8");
+    String name =request.getParameter("name");
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+    Statement stmt=con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,
+    ResultSet.CONCUR_READ_ONLY);
+    String seleStr="select * from stuinfo where name like'%"+name+"%'";
+    ResultSet rs=stmt.executeQuery(seleStr);
+
+  if(!rs.next()){out.print("没有找到姓名含有"+name+"的同学！");}
+  rs.beforeFirst();
+ while(rs.next()){
+     %>
+       <tr bgcolor="#22FF99">
+     <TD><%=rs.getString("xh") %></TD>
+      <TD><%=rs.getString("name") %></TD>
+       <TD><%=rs.getString("sex") %></TD>
+        <TD><%=rs.getString("tele") %></TD>
+         <TD><a href="edit.jsp?id=<%=rs.getString("id")%>">修改</TD>
+          <TD><a href="delete.jsp?id=<%=rs.getString("id")%>">删除</TD>
+        
+     </tr>
+     <%}
+%>
+     </table>
+     <br>
+     <%rs.close();
+     stmt.close();
+     con.close();%>
+     
+     <a href="searchStu.jsp">返回</a>
+  </div></body>
+</html>
+
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ page import="java.sql.*" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'index.jsp' starting page</title>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+  </head>
+  
+  <body><div align="center"> 
+    <font size="6">根据学号查询到的学生信息</font> <br>
+      <table bgcolor=yellow border=1>
+ 
+    <%
+    String number=request.getParameter("xh");
+    Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+    Statement stmt=con.createStatement();
+    String seleStr="select * from stuinfo where xh='"+number+"'";
+    ResultSet rs=stmt.executeQuery(seleStr);
+    if(!rs.next()){out.print("没有找到学号为"+number+"的同学！");}
+    else{
+     %>
+   
+   
+     <tr bgcolor="#22FF99">
+     <TD><%=rs.getString("xh") %></TD>
+      <TD><%=rs.getString("name") %></TD>
+       <TD><%=rs.getString("sex") %></TD>
+        <TD><%=rs.getString("tele") %></TD>
+         <TD>修改</TD>
+          <TD>删除</TD>
+        
+     </tr>
+     <%} %>
+     </table>
+     <br>
+     <%rs.close();
+     stmt.close();
+     con.close();%>
+     
+     <a href="searchStu.jsp">返回</a>
+  </div></body>
+</html>
+
+
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+
+<%
+Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+    Statement stmt=con.createStatement();
+
+String id=request.getParameter("id");
+String sql="delete from stuinfo where id='"+id+"'";
+stmt.executeUpdate(sql);
+response.sendRedirect("index.jsp");
+%>
+
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+
+<%
+	String path = request.getContextPath();
+	String basePath = request.getScheme() + "://"+ request.getServerName() + ":" + request.getServerPort()+ path + "/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link href="image/css.css" rel="stylesheet" type="text/css" />
+<base href="<%=basePath%>">
+<title>My JSP 'addMobile.jsp' starting page</title>		
+<script charset="gb2312" src="editor/kindeditor.js"></script>
+<script charset="gb2312" src="editor/lang/zh_CN.js"></script>
+<script>
+        KindEditor.ready(function(K) {
+                window.editor = K.create('#editor_id');          
+ });
+</script>
+
+		
+		<meta http-equiv="pragma" content="no-cache">
+		<meta http-equiv="cache-control" content="no-cache">
+		<meta http-equiv="expires" content="0">
+		<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+		<meta http-equiv="description" content="This is my page">
+		<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+
+	</head>
+	<%try {
+			 Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+    Statement stmt=con.createStatement();
+  			
+  			String id=request.getParameter("id");
+
+			String sql = "SELECT * FROM stuinfo WHERE Id=" + id;
+
+			ResultSet rs = stmt.executeQuery(sql);
+
+			if (rs != null) {
+				rs.first();
+				session.setAttribute("id", request.getParameter("id"));
+	%>
+	<body>
+		<div align="center">
+			<strong>&nbsp;</strong><font size="5">修改学生信息</font>
+			<br>
+		</div>
+			<div align="center">
+		<form name="form1" method="post" action="editsubmit.jsp"><br>
+		  <table width="429" border="1">
+		  <tr bgcolor=yellow>
+		
+		  </tr>
+		    <tbody>
+		      <tr>
+		        <td width="116">&nbsp;</td>
+		        <td width="120">原始信息</td>
+		        <td width="171">修改信息</td>
+	          </tr>
+	            <tr>
+		        <td>ID：</td>
+		        <td></td>
+		        <td><input type="text" name="id" size="80" readonly="true" value='<%=rs.getString("id")%>' style="width: 163px; "></td>
+	          </tr>
+		      <tr>
+		        <td>学号：</td>
+		        <td><%=rs.getString("xh") %></td>
+		        <td><input type="text" name="xh" size="80" value='<%=rs.getString("xh")%>' style="width: 215px; "></td>
+	          </tr>
+		      <tr>
+		        <td>姓名：</td>
+		        <td><%=rs.getString("name") %></td>
+		        <td><input type="text" name="xm" size="80"	value="<%=rs.getString("name")%>" style="width: 215px; "></td>
+	          </tr>
+		      <tr>
+		        <td>性别 ：</td>
+		        <td><%=rs.getString("sex") %></td>
+		        <td><input type="text" name="xb" size="80"	value="<%=rs.getString("sex")%>" style="width: 210px; "></td>
+	          </tr>
+		      <tr>
+		        <td>联系方式：</td>
+		        <td><%=rs.getString("tele") %></td>
+		        <td><input type="text" name="lx" size="80"	value="<%=rs.getString("tele")%>" style="width: 208px; "></td>
+	          </tr>
+	        </tbody>
+	      </table><br><br>
+
+			<input type="submit" name="Submit" value="提交">
+	</div>
+		</form>
+
+		<%
+			} else {//--------------------not logged-------------
+
+				}
+				con.close();
+				stmt.close();
+			} catch (Exception e) {
+				out.println("wrong");
+			}
+		%>
+	</body>
+</html>
+
+
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+
+<%
+try{
+
+ Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+  Statement stat = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+  			
+			
+request.setCharacterEncoding("utf-8");
+ String id=request.getParameter("id");
+
+    String xh=request.getParameter("xh");
+  	String xm=request.getParameter("xm");
+	String xb=request.getParameter("xb");
+	String lx=request.getParameter("lx");
+
+String sq="update stuinfo set xh='"+xh+"',name='"+xm+"',sex='"+xb+"',tele='"+lx+"' where Id="+id;
+stat.executeUpdate(sq);  
+}catch(Exception e){}
+response.sendRedirect("index.jsp");
+%>
+
+
+
+
