@@ -1,0 +1,287 @@
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+<html>
+<body>
+<font size=2 >
+<h3>JSP程序设计网上测试系统</h3>
+<%String c_name=(String) session.getAttribute("c_name");
+if (c_name==null||c_name==""){%>
+您还没有<a href=jsplogin.jsp>登录</a>
+<% }else %>
+  <form action="requestdemo5.jsp" method=post name=form>
+    姓名:
+	<input type="text" name="name" value=<%=c_name%>> 
+	
+	
+	<br><p>在JSP中,可以获得用户表单提交的信息的内置对象是:(    )<br>
+	<input type="radio" name="t1" value="a">response对象 
+    <input type="radio" name="t1" value="b">request对象
+    <br>
+    <input type="radio" name="t1" value="c">session对象 
+    <input type="radio" name="t1" value="d" checked="ok">application对象 
+    <br>
+	<p>在SQL语言中,为了实现数据的更新,使用的命令是:(    )
+    <br>
+    <input type="radio" name="t2" value="a">update语句 
+    <input type="radio" name="t2" value="b">insert语句
+    <br>
+    <input type="radio" name="t2" value="c">select语句
+    <input type="radio" name="t2" value="d">delete语句 
+    <br>
+    <input type="submit" value="提交答案" name="submit">
+  </form> 
+</font>
+</body>
+</html>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ page import="java.sql.*" %>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <base href="<%=basePath%>">
+    
+    <title>My JSP 'index.jsp' starting page</title>
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="expires" content="0">    
+	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
+	<meta http-equiv="description" content="This is my page">
+	<!--
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	-->
+  </head>
+  
+  <body><div align="center"> 
+    <font size="6">学生管理系统</font> <br>
+    <%Class.forName("com.mysql.jdbc.Driver");
+    Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3306/student?useUnicode=true&characterEncoding=GBK","root","root");
+    Statement stmt=con.createStatement();
+    String seleStr="select * from stuinfo";
+    ResultSet rs=stmt.executeQuery(seleStr);
+     %>
+     <table bgcolor=yellow border=1>
+        <tr bgcolor="#22FF99">
+     <TD>学号</TD>
+      <TD>姓名</TD>
+       <TD>性别</TD>
+        <TD>联系方式</TD>
+     </tr>
+     
+     <%while(rs.next())
+     {%>
+     <tr bgcolor="#22FF99">
+     <TD><%=rs.getString("xh") %></TD>
+      <TD><%=rs.getString("name") %></TD>
+       <TD><%=rs.getString("sex") %></TD>
+        <TD><%=rs.getString("tele") %></TD>
+         <TD><a href="edit.jsp?id=<%=rs.getString("id")%>">修改</TD>
+          <TD><a href="delete.jsp?id=<%=rs.getString("id")%>">删除</TD>
+        
+     </tr>
+     <%} %>
+     </table>
+     <br>
+     <%rs.close();
+     stmt.close();
+     con.close();%>
+     
+     <a href="searchStu.jsp">查询</a> <a href="insert.jsp">添加记录</a>  <a href="login.jsp">返回登录</a>
+  </div></body>
+</html>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+<html>
+<head>
+<link href="image/css.css" rel="stylesheet" type="text/css" />
+<title>添加学生信息</title></head>
+<script charset="gb2312" src="editor/kindeditor.js"></script>
+<script charset="gb2312" src="editor/lang/zh_CN.js"></script>
+<script>
+        KindEditor.ready(function(K) {
+                window.editor = K.create('#editor_id');          
+ });
+</script>
+
+<h2>添加学生信息</h2>
+<form action="do_insert.jsp" method="post">
+学号:<input type="text" name="xh" /><br>
+姓名:<input type="text" name="xm"/><br>
+性别:<input type="radio" value="男" name="xb" checked="checked" />男
+<input type="radio" value="女" name="xb"  />女
+<br>
+联系方式:<input type="text" name="lx"  /><br><br>
+详细信息：
+<textarea id="editor_id" name="content"  style="width:605px;height:300px;visibility:hidden;"></textarea>
+
+<input type="submit" value=" 添加 " /> 
+<input type="reset"  value=" 重置 " />
+</form>
+
+</html>
+<%@ page contentType="text/html;charset=utf-8" %>
+<%@ page import="shopBeans.ConnDB" %>
+<%@ page import="java.sql.*" %>
+
+<% 
+	request.setCharacterEncoding("utf-8");
+	String c_name=(String)request.getParameter("name");
+	
+	String c_pass=(String)request.getParameter("pass");
+
+	
+	String name="",pass="";
+	ConnDB conn=new ConnDB();
+	if (c_name!=null || c_name!="")
+	{
+		try
+		{
+			String strSql="select * from admin where name='"+c_name+"' and password='"+c_pass+"'";
+			ResultSet rsLogin=conn.doQuery(strSql);
+			while(rsLogin.next())
+			{
+				name=rsLogin.getString("name");
+				pass=rsLogin.getString("password");
+				
+			}
+		}
+		catch(Exception e)
+		{}
+    	if(name.equals(c_name) && pass.equals(c_pass))
+    	{
+    		session.setAttribute("c_name",c_name);
+    		
+			%>
+				<jsp:forward page="index.jsp"/>
+			<% 
+    	}    
+	else
+	{
+		out.println( "<HTML><HEAD><META http-equiv='refresh' content='2; URL=login.jsp' target=Main></HEAD><BODY bgcolor='#FFFFFF'></body></html>");
+		%>
+		<style type="text/css">
+		<!--
+		.STYLE10 {
+			font-size: 14px;
+			color: #FF0000;
+		}
+.STYLE3 {color: #FF0000; font-size: 12px; }
+		-->
+		</style>
+		<br /><br /><br /><br /><br /><br /><br /><br />
+ <center>
+	  <table width="300" border="1" bordercolor="#99CCFF" style="border-collapse:collapse" cellpadding="0" cellspacing="0">
+	  <!--DWLayoutTable-->
+	  <tr bgcolor="#99CCFF">
+		<td height="13">&nbsp;</td>
+	    </tr>
+	  <tr>
+		<td height="60" align="center"><span class="STYLE10">用户名或者密码错误，请验证后再输<span class="STYLE3">！</span></span></td>
+	    </tr>
+   </table>
+</center>
+		<%
+	}	
+}
+ %>
+<%@ page contentType="text/html; charset=UTF-8" %>
+<%@ page language="java" import="java.util.*" import="java.sql.*" pageEncoding="UTF-8"%>
+<html>
+<body>
+<br>
+<br>
+<p style="color: rgb(0, 0, 255); text-align: center;"><font size="8">学生管理系统</font></p>
+
+<form name="form1" onsubmit="return check()"  method="post" action="login_ok.jsp">
+  <table width="350"  border="0" align="center" bgcolor="#0099FF">
+    <tr>
+      <th colspan="2" scope="col">&nbsp;用户登录</th>
+    </tr>
+    <tr bgcolor="#FFFFFF">
+      <th scope="row">用户名：</th>
+      <td><input name="name" type="text" id="name"></td>
+    </tr>
+    <tr bgcolor="#FFFFFF">
+      <th scope="row">密码：</th>
+      <td><input name="pass" type="password" id="pass"></td>
+    </tr>
+    <tr bgcolor="#FFFFFF">
+      <th scope="row">&nbsp;</th>
+      <td><input type="submit" name="Submit" value="提交">
+      <input type="reset" name="Reset" value="重置"></td>
+    </tr>
+  </table>
+</form>
+</body>
+</html>
+<script type="text/javascript">
+function check()
+{
+  if (form1.name.value=="")
+  {
+    alert("请输入用户名!!!");
+    form.name.focus();
+    return false;
+  }
+  if (form1.pass.value=="")
+  {
+    alert("请输入密码!!!");
+    form.pass.focus();
+    return false;
+  }
+}
+</SCRIPT>
+
+
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
+<%@ page import="shopBeans.ConnDB" %>
+<%@ page import="shopBeans.Convert" %>
+<%@ page import="java.sql.*" %>
+
+<html>
+<body><font size=3>
+
+
+
+<% int n=0;
+	String strName=request.getParameter("name");
+
+	String strTemp=strName;
+  	String s1=request.getParameter("t1");
+  	String s2=request.getParameter("t2");
+  	if(s1==null)
+    	{s1="";}
+  	if(s2==null)
+    	{s2="";}
+  	if(s1.equals("b"))
+    	{ n++;}
+ 	if(s2.equals("a"))
+    	{ n++;}
+%>
+<%  String userName = "root";
+String userPasswd = "root";//密码
+String dbName = "user"; //数据库名
+String tableName = "user"; //表名
+//联结字符串
+String url = "jdbc:mysql://localhost:3306/" + dbName;
+
+
+Class.forName("com.mysql.jdbc.Driver");
+Connection conn = DriverManager.getConnection(url,userName,userPasswd);
+Statement stat = conn.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+   
+String sq="update user set score="+n+" where name='"+strName+"'";
+				
+stat.executeUpdate(sq);
+%>
+
+<P>您的得分为:<%=n%>分
+</font>
+</body>
+</html>
+
+
