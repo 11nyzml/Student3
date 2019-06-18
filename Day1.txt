@@ -1,0 +1,208 @@
+package com.java1234.view;
+
+import java.awt.Color;
+
+public class LogOnFrm extends JFrame {
+   DbUtil dbUtil=new DbUtil();
+   UserDao userDao=new UserDao();
+   
+	private JPanel contentPane;
+	private JTextField userNameTxt;
+	private JPasswordField passwordTxt;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					LogOnFrm frame = new LogOnFrm();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the frame.
+	 */
+	public LogOnFrm() {
+		//改变默认字体
+		Font font=new Font("Dialog",Font.PLAIN,12);
+				java.util.Enumeration keys=UIManager.getDefaults().keys();
+				while (keys.hasMoreElements()){
+				   Object key=keys.nextElement();
+				   Object value=UIManager.get(key);
+				   if (value instanceof javax.swing.plaf.FontUIResource){
+				         UIManager.put(key,font);     
+				}
+		}
+		//设置frame居中显示
+	    this.setLocationRelativeTo(null);
+		setResizable(false);
+		setTitle("管理员登录");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setBounds(100, 100, 599, 403);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(null);
+		
+		JLabel label_2 = new JLabel("");
+		label_2.setBounds(10, 187, 0, 0);
+		contentPane.add(label_2);
+		
+		JLabel lblNewLabel = new JLabel("学生信息管理系统");
+		lblNewLabel.setBounds(222, 38, 160, 22);
+		lblNewLabel.setFont(new Font("华文行楷", Font.PLAIN, 20));
+		lblNewLabel.setForeground(Color.PINK);
+		contentPane.add(lblNewLabel);
+		
+		JLabel label = new JLabel("用户名：");
+		label.setBounds(179, 112, 72, 15);
+		contentPane.add(label);
+		
+		userNameTxt = new JTextField();
+		userNameTxt.setBounds(261, 106, 142, 21);
+		contentPane.add(userNameTxt);
+		userNameTxt.setColumns(10);
+		
+		JLabel label_1 = new JLabel("密码：");
+		label_1.setBounds(180, 155, 71, 15);
+		contentPane.add(label_1);
+		
+		passwordTxt = new JPasswordField();
+		passwordTxt.setBounds(263, 154, 142, 21);
+		contentPane.add(passwordTxt);
+		
+		JButton jb_longon = new JButton("登录");
+		jb_longon.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			String userName=userNameTxt.getText();
+			String password=new String(passwordTxt.getPassword());
+			if(StringUtil.isEmpty(userName)){
+				JOptionPane.showMessageDialog(null, "用户名不能为空！");
+				return;
+			}
+			if(StringUtil.isEmpty(password)){
+				JOptionPane.showMessageDialog(null, "密码不能为空！");
+				return;
+			}
+			User user=new User(userName,password);
+			Connection con=null;
+			try {
+				con=dbUtil.getCon();
+				User currentUser=userDao.login(con,user);
+				if(currentUser!=null){
+				JOptionPane.showMessageDialog(null, "登录成功！");
+				
+				}else{
+					JOptionPane.showMessageDialog(null, "登录失败！");
+				}
+			} catch (Exception e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "登录失败！");
+			}finally{
+				try {
+					dbUtil.closeCon(con);
+				} catch (Exception e1) {
+					
+					e1.printStackTrace();
+				}
+			}
+			}
+		});
+		jb_longon.setToolTipText("");
+		jb_longon.setBounds(143, 234, 93, 23);
+		contentPane.add(jb_longon);
+		
+		JButton jb_reset = new JButton("重置");
+		jb_reset.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+	            userNameTxt.setText("");
+	            passwordTxt.setText("");
+			}
+		});
+		
+		jb_reset.setBounds(369, 233, 93, 23);
+		contentPane.add(jb_reset);
+	}
+}
+
+
+
+
+package com.java1234.dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import com.java1234.model.User;
+
+
+public class UserDao {
+	//登录验证
+     public User login(Connection con,User user) throws Exception{
+    	 User resultUser=null;
+    	 String sql="select * from t_user where userName=? and password=?";
+    	 PreparedStatement pstmt=(PreparedStatement) con.prepareStatement(sql);
+    	 pstmt.setString(1, user.getUserName());
+    	 pstmt.setString(2, user.getPassword());
+    	 ResultSet rs=pstmt.executeQuery();
+    	 if(rs.next()){
+    		 resultUser=new User();
+    		 resultUser.setUserName(rs.getNString("userName"));
+    		 resultUser.setPassword(rs.getNString("password"));
+    		 
+    	 }
+    	 return resultUser;
+     }
+}
+
+
+package com.java1234.model;
+// 用户model 类
+public class User {
+    private int id;
+    private String userName;
+    private String password;
+    
+    
+	public User() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public User(String userName, String password) {
+		super();
+		this.userName = userName;
+		this.password = password;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+    
+    
+}
+
